@@ -23,6 +23,14 @@ export const authConfig = {
         return Response.redirect(new URL(destination, nextUrl))
       }
 
+      // Landing page: pública para visitantes, redirigir si ya está autenticado
+      if (pathname === "/") {
+        if (!isLoggedIn) return true
+        const role = (auth?.user as { role?: string })?.role
+        const destination = role === "ADMIN" ? "/dashboard" : "/novedades"
+        return Response.redirect(new URL(destination, nextUrl))
+      }
+
       // Rutas protegidas: redirigir a login si no hay sesión
       if (!isLoggedIn) {
         return Response.redirect(new URL("/login", nextUrl))

@@ -1,7 +1,7 @@
 import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import type { Metadata } from "next"
-import LoginForm from "./LoginForm"
+import { LoginForm } from "@/components/organisms/LoginForm"
 
 export const metadata: Metadata = {
   title: "Iniciar sesión | Gestión de Empleados",

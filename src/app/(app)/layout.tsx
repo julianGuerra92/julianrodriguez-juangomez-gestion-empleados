@@ -1,7 +1,7 @@
 import type { ReactNode } from "react"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
-import { Sidebar } from "@/components/Sidebar"
+import { Sidebar } from "@/components/organisms/Sidebar"
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const session = await auth()
