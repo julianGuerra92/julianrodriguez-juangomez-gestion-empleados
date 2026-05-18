@@ -1,8 +1,8 @@
-import { LandingNavbar } from "@/components/organisms/LandingNavbar"
-import { HeroSection } from "@/components/organisms/HeroSection"
-import { FeatureGrid } from "@/components/organisms/FeatureGrid"
-import { CTASection } from "@/components/organisms/CTASection"
-import { LandingFooter } from "@/components/organisms/LandingFooter"
+import { LandingNavbar } from "@/components/organisms/LandingNavbar";
+import { HeroSection } from "@/components/organisms/HeroSection";
+import { FeatureGrid } from "@/components/organisms/FeatureGrid";
+import { CTASection } from "@/components/organisms/CTASection";
+import { LandingFooter } from "@/components/organisms/LandingFooter";
 
 export default function Home() {
   return (
@@ -14,6 +14,5 @@ export default function Home() {
       <CTASection />
       <LandingFooter />
     </div>
-  )
+  );
 }
-

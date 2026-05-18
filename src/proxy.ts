@@ -1,11 +1,11 @@
-import NextAuth from "next-auth"
-import { authConfig } from "@/auth.config"
+import NextAuth from "next-auth";
+import { authConfig } from "@/auth.config";
 
 /**
  * Middleware de autenticación basado en JWT.
  * Usa authConfig (sin Prisma) para ser compatible con el Edge Runtime.
  */
-export default NextAuth(authConfig).auth
+export default NextAuth(authConfig).auth;
 
 export const config = {
   matcher: [
@@ -19,4 +19,4 @@ export const config = {
      */
     "/((?!api/auth|_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
-}
+};

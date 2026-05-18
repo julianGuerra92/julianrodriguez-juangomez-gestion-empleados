@@ -1,19 +1,20 @@
-import { auth } from "@/auth"
-import { redirect } from "next/navigation"
-import type { Metadata } from "next"
-import { LoginForm } from "@/components/organisms/LoginForm"
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { ROLES } from "@/constants/roles";
+import type { Metadata } from "next";
+import { LoginForm } from "@/components/organisms/LoginForm";
 
 export const metadata: Metadata = {
   title: "Iniciar sesión | Gestión de Empleados",
-}
+};
 
 export default async function LoginPage() {
   // Si ya hay sesión activa, redirigir según rol
-  const session = await auth()
+  const session = await auth();
   if (session?.user) {
-    const role = session.user.role
-    redirect(role === "ADMIN" ? "/dashboard" : "/novedades")
+    const role = session.user.role;
+    redirect(role === ROLES.ADMIN ? "/dashboard" : "/novedades");
   }
 
-  return <LoginForm />
+  return <LoginForm />;
 }

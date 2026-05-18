@@ -1,13 +1,19 @@
-import { ButtonHTMLAttributes } from "react"
-import { Loader2 } from "lucide-react"
+import { ButtonHTMLAttributes } from "react";
+import { Loader2 } from "lucide-react";
 
-type ButtonVariant = "primary" | "secondary" | "accent" | "ghost" | "outline" | "error"
-type ButtonSize = "sm" | "md" | "lg"
+type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "accent"
+  | "ghost"
+  | "outline"
+  | "error";
+type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: ButtonVariant
-  size?: ButtonSize
-  isLoading?: boolean
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  isLoading?: boolean;
 }
 
 const variantMap: Record<ButtonVariant, string> = {
@@ -17,13 +23,13 @@ const variantMap: Record<ButtonVariant, string> = {
   ghost: "btn-ghost",
   outline: "btn-outline",
   error: "btn-error",
-}
+};
 
 const sizeMap: Record<ButtonSize, string> = {
   sm: "btn-sm",
   md: "",
   lg: "btn-lg",
-}
+};
 
 export function Button({
   variant,
@@ -36,7 +42,12 @@ export function Button({
 }: ButtonProps) {
   return (
     <button
-      className={["btn", variant ? variantMap[variant] : "", sizeMap[size], className]
+      className={[
+        "btn",
+        variant ? variantMap[variant] : "",
+        sizeMap[size],
+        className,
+      ]
         .filter(Boolean)
         .join(" ")}
       disabled={disabled || isLoading}
@@ -51,5 +62,5 @@ export function Button({
         children
       )}
     </button>
-  )
+  );
 }

@@ -1,11 +1,11 @@
-import { ReactNode } from "react"
+import { ReactNode } from "react";
 
-type AlertVariant = "error" | "success" | "info" | "warning"
+type AlertVariant = "error" | "success" | "info" | "warning";
 
 interface AlertProps {
-  variant?: AlertVariant
-  children: ReactNode
-  role?: string
+  variant?: AlertVariant;
+  children: ReactNode;
+  role?: string;
 }
 
 const variantMap: Record<AlertVariant, string> = {
@@ -13,11 +13,14 @@ const variantMap: Record<AlertVariant, string> = {
   success: "alert-success",
   info: "alert-info",
   warning: "alert-warning",
-}
+};
 
 export function Alert({ variant = "error", children, role }: AlertProps) {
   return (
-    <div role={role} className={["alert", variantMap[variant], "py-2 text-sm"].join(" ")}>
+    <div
+      role={role}
+      className={["alert", variantMap[variant], "py-2 text-sm"].join(" ")}
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="h-4 w-4 shrink-0"
@@ -34,5 +37,5 @@ export function Alert({ variant = "error", children, role }: AlertProps) {
       </svg>
       <span>{children}</span>
     </div>
-  )
+  );
 }
