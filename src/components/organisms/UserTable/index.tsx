@@ -38,7 +38,6 @@ export function UserTable({
               <th>Correo</th>
               <th>Fecha de Ingreso</th>
               <th>Rol</th>
-              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -50,11 +49,6 @@ export function UserTable({
                   {format(new Date(user.hireDate), "dd/MM/yyyy", {
                     locale: es,
                   })}
-                </td>
-                <td>
-                  <span className="badge badge-lg">
-                    {getRoleLabel(user.role)}
-                  </span>
                 </td>
                 <td>
                   <RoleSelector

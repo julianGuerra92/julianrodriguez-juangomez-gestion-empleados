@@ -56,7 +56,7 @@ export function RoleSelector({
         onChange={handleRoleChange}
         disabled={loading}
         options={roleOptions}
-        className="w-32"
+        className="w-fit"
       />
 
       {showModal && (
