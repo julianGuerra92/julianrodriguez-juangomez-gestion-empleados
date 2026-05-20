@@ -8,6 +8,7 @@ import {
   LogOut,
   Menu,
   X,
+  ClipboardList,
 } from "lucide-react";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
@@ -40,6 +41,11 @@ const adminLinks: NavItem[] = [
   { href: "/empleados", label: "Empleados", icon: <Users size={18} /> },
   { href: "/novedades", label: "Novedades", icon: <FileText size={18} /> },
   { href: "/vacaciones", label: "Vacaciones", icon: <Umbrella size={18} /> },
+  {
+    href: "/vacaciones/admin",
+    label: "Solicitudes de Vacaciones",
+    icon: <ClipboardList size={18} />,
+  },
 ];
 
 interface SidebarProps {

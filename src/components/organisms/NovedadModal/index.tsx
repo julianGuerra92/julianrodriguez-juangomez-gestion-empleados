@@ -16,9 +16,9 @@ interface Employee {
 }
 
 interface NovedadModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (data: {
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
+  readonly onSubmit: (data: {
     type: NovedadType;
     startDate: string;
     endDate: string;
@@ -26,11 +26,52 @@ interface NovedadModalProps {
     reason: string;
     userId: string;
   }) => Promise<void>;
-  employees: Employee[];
-  currentUserId: string;
-  userRole: string;
-  editingNovedad?: NovedadListItem | null;
-  loading?: boolean;
+  readonly employees: Employee[];
+  readonly currentUserId: string;
+  readonly userRole: string;
+  readonly editingNovedad?: NovedadListItem | null;
+  readonly loading?: boolean;
+}
+
+interface FormState {
+  type: NovedadType;
+  startDate: string;
+  endDate: string;
+  hours: string;
+  reason: string;
+  selectedUserId: string;
+}
+
+// Deriva el estado inicial directamente desde las props.
+// Cuando el padre cambie la `key`, React remonta el componente
+// y esta función se ejecuta de nuevo — sin necesidad de useEffect.
+function getInitialFormState(
+  editingNovedad: NovedadListItem | null | undefined,
+  currentUserId: string
+): FormState {
+  if (editingNovedad) {
+    return {
+      type: editingNovedad.type,
+      startDate: new Date(editingNovedad.startDate)
+        .toISOString()
+        .split("T")[0],
+      endDate: editingNovedad.endDate
+        ? new Date(editingNovedad.endDate).toISOString().split("T")[0]
+        : "",
+      hours: editingNovedad.hours ? String(editingNovedad.hours) : "",
+      reason: editingNovedad.reason,
+      selectedUserId: editingNovedad.user.id,
+    };
+  }
+
+  return {
+    type: "HORA_EXTRA",
+    startDate: "",
+    endDate: "",
+    hours: "",
+    reason: "",
+    selectedUserId: currentUserId,
+  };
 }
 
 export function NovedadModal({
@@ -43,57 +84,36 @@ export function NovedadModal({
   editingNovedad,
   loading = false,
 }: NovedadModalProps) {
-  const [type, setType] = useState<NovedadType>("HORA_EXTRA");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [hours, setHours] = useState("");
-  const [reason, setReason] = useState("");
-  const [selectedUserId, setSelectedUserId] = useState(currentUserId);
+  // ✅ Estado inicial derivado directamente de las props, sin useEffect
+  const [formState, setFormState] = useState<FormState>(() =>
+    getInitialFormState(editingNovedad, currentUserId)
+  );
   const [error, setError] = useState("");
+
   const isAdmin = userRole === ROLES.ADMIN;
+  const { type, startDate, endDate, hours, reason, selectedUserId } = formState;
 
-  useEffect(() => {
-    if (editingNovedad) {
-      setType(editingNovedad.type);
-      setStartDate(
-        new Date(editingNovedad.startDate).toISOString().split("T")[0]
-      );
-      setEndDate(
-        editingNovedad.endDate
-          ? new Date(editingNovedad.endDate).toISOString().split("T")[0]
-          : ""
-      );
-      setHours(editingNovedad.hours ? String(editingNovedad.hours) : "");
-      setReason(editingNovedad.reason);
-      setSelectedUserId(editingNovedad.user.id);
-    }
-  }, [editingNovedad, isOpen]);
+  const setField = useCallback(
+    <K extends keyof FormState>(key: K, value: FormState[K]) => {
+      setFormState((prev) => ({ ...prev, [key]: value }));
+    },
+    []
+  );
 
+  // ✅ Este useEffect es correcto: solo limpia un timer (sistema externo),
+  // no actualiza estado de React desde dentro del efecto.
   useEffect(() => {
     if (error) {
-      const timer = setTimeout(() => {
-        setError("");
-      }, 2000);
+      const timer = setTimeout(() => setError(""), 2000);
       return () => clearTimeout(timer);
     }
   }, [error]);
 
-  const handleReset = useCallback(() => {
-    setType("HORA_EXTRA");
-    setStartDate("");
-    setEndDate("");
-    setHours("");
-    setReason("");
-    setSelectedUserId(currentUserId);
-    setError("");
-  }, [currentUserId]);
-
   const handleClose = useCallback(() => {
-    handleReset();
     onClose();
-  }, [handleReset, onClose]);
+  }, [onClose]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
 
@@ -107,31 +127,23 @@ export function NovedadModal({
       return;
     }
 
-    if (type === "HORA_EXTRA") {
-      if (!hours) {
-        setError("Las horas son requeridas");
-        return;
-      }
-    } else if (type === "INCAPACIDAD") {
-      if (!endDate) {
-        setError("La fecha de fin es requerida");
-        return;
-      }
+    if (type === "HORA_EXTRA" && !hours) {
+      setError("Las horas son requeridas");
+      return;
+    }
+
+    if (type === "INCAPACIDAD" && !endDate) {
+      setError("La fecha de fin es requerida");
+      return;
     }
 
     try {
-      await onSubmit({
-        type,
-        startDate,
-        endDate,
-        hours,
-        reason,
-        userId: selectedUserId,
-      });
-      handleReset();
+      await onSubmit({ type, startDate, endDate, hours, reason, userId: selectedUserId });
       onClose();
-    } catch (err: any) {
-      setError(err.message || "Error al registrar la novedad");
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Error al registrar la novedad";
+      setError(errorMessage);
     }
   };
 
@@ -151,7 +163,7 @@ export function NovedadModal({
             <EmployeeSelector
               employees={employees}
               value={selectedUserId}
-              onChange={setSelectedUserId}
+              onChange={(value) => setField("selectedUserId", value)}
               disabled={loading}
               label="Registrar para"
             />
@@ -159,15 +171,15 @@ export function NovedadModal({
 
           <NovedadFormFields
             type={type}
-            onTypeChange={setType}
+            onTypeChange={(value) => setField("type", value)}
             startDate={startDate}
-            onStartDateChange={setStartDate}
+            onStartDateChange={(value) => setField("startDate", value)}
             endDate={endDate}
-            onEndDateChange={setEndDate}
+            onEndDateChange={(value) => setField("endDate", value)}
             hours={hours}
-            onHoursChange={setHours}
+            onHoursChange={(value) => setField("hours", value)}
             reason={reason}
-            onReasonChange={setReason}
+            onReasonChange={(value) => setField("reason", value)}
             disabled={loading}
           />
 
@@ -191,12 +203,16 @@ export function NovedadModal({
           </div>
         </form>
 
-        <form
-          method="dialog"
-          className="modal-backdrop"
-          onClick={handleClose}
-        >
-          <button>close</button>
+        <form method="dialog" className="modal-backdrop">
+          <button
+            type="button"
+            onClick={handleClose}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") handleClose();
+            }}
+          >
+            close
+          </button>
         </form>
       </div>
     </div>
