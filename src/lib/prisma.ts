@@ -6,15 +6,26 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function getConnectionString() {
-  const url = new URL(process.env.DATABASE_URL!);
-  // ?pgbouncer=true es un flag de Prisma Engine, no es válido para el driver pg
-  url.searchParams.delete("pgbouncer");
-  return url.toString();
+  if (!process.env.DATABASE_URL) return undefined;
+  
+  try {
+    const url = new URL(process.env.DATABASE_URL);
+    url.searchParams.delete("pgbouncer");
+    return url.toString();
+  } catch (error) {
+    return process.env.DATABASE_URL;
+  }
 }
 
 function createPrismaClient() {
-  const adapter = new PrismaPg({ connectionString: getConnectionString() });
-  return new PrismaClient({ adapter });
+  const connectionString = getConnectionString();
+  
+  if (connectionString) {
+    const adapter = new PrismaPg({ connectionString });
+    return new PrismaClient({ adapter });
+  }
+
+  return new PrismaClient({} as any);
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
