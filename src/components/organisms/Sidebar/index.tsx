@@ -86,10 +86,10 @@ export function Sidebar({ role, userName }: SidebarProps) {
       {/* Sidebar panel */}
       <aside
         className={[
-          "fixed top-0 left-0 z-40 flex min-h-screen w-64 flex-col bg-base-200",
+          "fixed top-0 left-0 z-40 flex h-screen w-64 flex-col bg-base-200",
           "transition-transform duration-300 ease-in-out",
           open ? "translate-x-0" : "-translate-x-full",
-          "lg:translate-x-0 lg:static lg:flex lg:min-h-screen",
+          "lg:translate-x-0 lg:sticky lg:top-0 lg:flex lg:h-screen",
         ].join(" ")}
       >
         {/* Logo */}

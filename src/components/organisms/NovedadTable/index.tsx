@@ -60,6 +60,7 @@ export function NovedadTable({
                 <tr>
                   <th>Fecha</th>
                   <th>Tipo</th>
+                  <th>Empleado</th>
                   <th>Duración/Fechas</th>
                   <th>Motivo</th>
                   <th>Acciones</th>
@@ -91,6 +92,7 @@ export function NovedadTable({
                           {getTypeLabel(novedad.type)}
                         </Badge>
                       </td>
+                      <td className="text-sm">{novedad.user.name}</td>
                       <td className="text-sm">{durationText}</td>
                       <td className="text-sm truncate max-w-xs">
                         {novedad.reason}

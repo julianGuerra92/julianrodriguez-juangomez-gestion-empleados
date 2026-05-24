@@ -15,6 +15,7 @@ interface EmployeeSelectorProps {
   onChange: (userId: string) => void;
   disabled?: boolean;
   label?: string;
+  allowAllOption?: boolean;
 }
 
 export function EmployeeSelector({
@@ -23,11 +24,15 @@ export function EmployeeSelector({
   onChange,
   disabled = false,
   label = "Empleado",
+  allowAllOption = false,
 }: EmployeeSelectorProps) {
-  const options = employees.map((emp) => ({
-    label: `${emp.name} (${emp.email})`,
-    value: emp.id,
-  }));
+  const options = [
+    ...(allowAllOption ? [{ label: "Todos los empleados (Filtro general)", value: "" }] : []),
+    ...employees.map((emp) => ({
+      label: `${emp.name} (${emp.email})`,
+      value: emp.id,
+    }))
+  ];
 
   return (
     <div>

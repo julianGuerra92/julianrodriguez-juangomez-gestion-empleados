@@ -23,6 +23,7 @@
    - Selector de empleado (reutilizando lógica de EmployeeSelector)
    - Inputs fecha inicio/fin con validaciones
    - Botón "Aplicar filtro" + resetear
+   - El bitón resetear limpia filtros y recarga datos sin filtro (vista general)
 
 ### **Fase 3: Organisms (Gráficas)**
 4. `src/components/organisms/BarChartHorasExtras/index.tsx` — Usa `recharts` BarChart:
